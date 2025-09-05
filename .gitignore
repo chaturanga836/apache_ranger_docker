@@ -1,0 +1,15 @@
+# Docker
+*.log
+*.pid
+*.seed
+*.pid.lock
+
+# Ignore Docker volumes
+data/
+tmp/
+
+# Ignore IDE files
+.vscode/
+.idea/
+*.swp
+.env

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <property>
+        <name>ranger.plugin.trino.policy.rest.url</name>
+        <value>http://ranger-admin:6080</value>
+    </property>
+    <property>
+        <name>ranger.plugin.trino.access.cluster.name</name>
+        <value>trino-cluster-01</value>
+    </property>
+    <property>
+        <name>ranger.plugin.trino.service.name</name>
+        <value>trino</value>
+    </property>
+</configuration>
