@@ -8,7 +8,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends curl unzip ca-c
 # Define variables
 ARG RANGER_TRINO_VERSION=476
 ENV PLUGIN_DIR /tmp/trino-ranger-${RANGER_TRINO_VERSION}
-ENV PLUGIN_LIB_DIR /tmp/trino-ranger-${RANGER_TRINO_VERSION}/lib
+# ✅ FIX: unzip creates nested dir /tmp/trino-ranger-476/trino-ranger-476/lib
+ENV PLUGIN_LIB_DIR /tmp/trino-ranger-${RANGER_TRINO_VERSION}/trino-ranger-${RANGER_TRINO_VERSION}/lib
 
 # Download and extract the Trino Ranger plugin from Maven
 RUN set -eux; \
