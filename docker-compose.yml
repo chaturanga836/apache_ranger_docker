@@ -63,32 +63,13 @@ services:
   trino:
     image: trinodb/trino:476
     container_name: trino
-    depends_on:
-      - plugin-downloader
     ports:
       - "8080:8080"
     volumes:
-      - trino-plugin:/usr/lib/trino/plugin/ranger-trino-plugin
+      - ./trino-ranger-plugin/trino-ranger-476:/usr/lib/trino/plugin/ranger-trino-plugin
       - ./trino-ranger/config/etc:/etc/trino
       - ./trino-ranger/config/catalogs:/etc/trino/catalog
     command: ["/usr/lib/trino/bin/run-trino"]
-
-  plugin-downloader:
-    image: debian:bullseye-slim
-    container_name: trino-plugin-downloader
-    volumes:
-      - trino-plugin:/usr/lib/trino/plugin/ranger-trino-plugin
-    working_dir: /tmp
-    entrypoint: ["sh", "-c"]
-    command: >
-      apt-get update &&
-      apt-get install -y curl unzip ca-certificates &&
-      mkdir -p /usr/lib/trino/plugin/ranger-trino-plugin/lib &&
-      curl -sSL https://repo1.maven.org/maven2/io/trino/trino-ranger/476/trino-ranger-476.zip -o trino-ranger.zip &&
-      unzip trino-ranger.zip -d /tmp/trino-ranger &&
-      cp /tmp/trino-ranger/trino-ranger-476-services.jar /usr/lib/trino/plugin/ranger-trino-plugin/ &&
-      cp /tmp/trino-ranger/*.jar /usr/lib/trino/plugin/ranger-trino-plugin/lib/ &&
-      echo "Plugin installed successfully"
 
 volumes:
   trino-plugin:
