@@ -65,7 +65,7 @@ services:
       context: . # Looks for the Dockerfile in the current directory
       dockerfile: Dockerfile # Correct path relative to the context
     container_name: trino
-    restart: always
+
     ports:
       - "8080:8080"
     volumes:
