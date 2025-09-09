@@ -61,25 +61,35 @@ services:
   # 3. Trino Service with Ranger Plugin
   # ------------------------------------------------
   trino:
-    build:
-      context: . # Looks for the Dockerfile in the current directory
-      dockerfile: Dockerfile # Correct path relative to the context
+    image: trinodb/trino:476
     container_name: trino
-
+    depends_on:
+      - plugin-downloader
     ports:
       - "8080:8080"
     volumes:
-      # This is the correct way to mount your config files.
-      # Leave this part as is.
-      - ./trino-ranger/config/catalogs:/etc/trino/catalog
-      - ./trino-ranger/config/etc:/etc/trino
-      
-      # REMOVE the plugins volume mount. The Dockerfile now handles this.
-      # - ./trino-ranger/plugins:/usr/lib/trino/plugin
-    environment:
-      - TRINO_NODE_PROPERTIES_node_coordinator=true
-      - TRINO_NODE_PROPERTIES_node_worker=true
-    depends_on:
-      - ranger-admin
+      - trino-plugin:/usr/lib/trino/plugin/ranger-trino-plugin
+      - ./trino-config/etc:/etc/trino
+      - ./trino-config/catalogs:/etc/trino/catalog
+    command: ["launcher", "run"]
+
+  plugin-downloader:
+    image: debian:bullseye-slim
+    container_name: trino-plugin-downloader
+    volumes:
+      - trino-plugin:/usr/lib/trino/plugin/ranger-trino-plugin
+    working_dir: /tmp
+    entrypoint: ["sh", "-c"]
+    command: >
+      apt-get update &&
+      apt-get install -y curl unzip ca-certificates &&
+      mkdir -p /usr/lib/trino/plugin/ranger-trino-plugin/lib &&
+      curl -sSL https://repo1.maven.org/maven2/io/trino/trino-ranger/476/trino-ranger-476.zip -o trino-ranger.zip &&
+      unzip trino-ranger.zip -d /tmp/trino-ranger &&
+      cp /tmp/trino-ranger/trino-ranger-476-services.jar /usr/lib/trino/plugin/ranger-trino-plugin/ &&
+      cp /tmp/trino-ranger/*.jar /usr/lib/trino/plugin/ranger-trino-plugin/lib/ &&
+      echo "Plugin installed successfully"
+
 volumes:
+  trino-plugin:
   ranger_db_data:
