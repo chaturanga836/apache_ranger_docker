@@ -23,7 +23,7 @@ services:
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      test: ["CMD-SHELL", "pg_isready -U rangeradmin -d ranger"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -61,23 +61,24 @@ services:
   # 3. Trino Service with Ranger Plugin
   # ------------------------------------------------
   trino:
-    image: trinodb/trino:476
+    build:
+      context: . # Looks for the Dockerfile in the current directory
+      dockerfile: Dockerfile # Correct path relative to the context
     container_name: trino
     restart: always
     ports:
       - "8080:8080"
     volumes:
-      # Mount the Trino configuration directory
+      # This is the correct way to mount your config files.
+      # Leave this part as is.
       - ./trino-ranger/config/catalogs:/etc/trino/catalog
       - ./trino-ranger/config/etc:/etc/trino
-      # Mount the Ranger plugin
-      - ./trino-ranger/plugins:/usr/lib/trino/plugin
+      # REMOVE the plugins volume mount. The Dockerfile now handles this.
+      # - ./trino-ranger/plugins:/usr/lib/trino/plugin
     environment:
-      # A simple way to configure the coordinator role
       - TRINO_NODE_PROPERTIES_node_coordinator=true
       - TRINO_NODE_PROPERTIES_node_worker=true
     depends_on:
       - ranger-admin
-
 volumes:
   ranger_db_data:
