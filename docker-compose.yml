@@ -69,8 +69,8 @@ services:
       - "8080:8080"
     volumes:
       - trino-plugin:/usr/lib/trino/plugin/ranger-trino-plugin
-      - ./trino-config/etc:/etc/trino
-      - ./trino-config/catalogs:/etc/trino/catalog
+      - ./trino-ranger/config/etc:/etc/trino
+      - ./trino-ranger/config/catalogs:/etc/trino/catalog
     command: ["/usr/lib/trino/bin/run-trino"]
 
   plugin-downloader:
