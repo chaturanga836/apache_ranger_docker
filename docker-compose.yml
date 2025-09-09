@@ -71,7 +71,7 @@ services:
       - trino-plugin:/usr/lib/trino/plugin/ranger-trino-plugin
       - ./trino-config/etc:/etc/trino
       - ./trino-config/catalogs:/etc/trino/catalog
-    command: ["launcher", "run"]
+    command: ["/usr/lib/trino/bin/run-trino"]
 
   plugin-downloader:
     image: debian:bullseye-slim
