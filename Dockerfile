@@ -31,11 +31,12 @@ ENV FINAL_PLUGIN_DIR=/usr/lib/trino/plugin/ranger-trino-plugin
 # Create plugin folder + lib folder
 RUN mkdir -p ${FINAL_PLUGIN_DIR}/lib
 
-# Copy main plugin JAR (service entry point) to plugin root
-COPY --from=plugin-builder ${PLUGIN_LIB_DIR}/trino-ranger-*-services.jar ${FINAL_PLUGIN_DIR}/
+# Copy main plugin JAR
+COPY --from=plugin-builder /tmp/trino-ranger-476/trino-ranger-476/trino-ranger-476-services.jar /usr/lib/trino/plugin/ranger-trino-plugin/
 
-# Copy all other JARs (dependencies) to lib folder
-COPY --from=plugin-builder ${PLUGIN_LIB_DIR}/*.jar ${FINAL_PLUGIN_DIR}/lib/
+# Copy all other JARs
+COPY --from=plugin-builder /tmp/trino-ranger-476/trino-ranger-476/*.jar /usr/lib/trino/plugin/ranger-trino-plugin/lib/
+
 
 # Copy Trino configuration (etc + catalogs)
 COPY ./trino-ranger/config/etc /etc/trino
