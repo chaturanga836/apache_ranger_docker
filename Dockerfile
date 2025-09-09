@@ -28,7 +28,7 @@ ENV FINAL_PLUGIN_DIR /usr/lib/trino/plugin/ranger-trino-plugin
 RUN mkdir -p ${FINAL_PLUGIN_DIR}
 
 # Copy the JARs from the 'lib' subdirectory of the build stage to the final plugin directory
-COPY --from=plugin-builder ${PLUGIN_DIR} ${FINAL_PLUGIN_DIR}
+COPY --from=plugin-builder ${PLUGIN_LIB_DIR}/* ${FINAL_PLUGIN_DIR}/
 
 # Copy the configuration files from the local directories
 COPY ./trino-ranger/config/etc /etc/trino
