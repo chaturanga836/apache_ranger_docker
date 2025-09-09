@@ -73,6 +73,7 @@ services:
       # Leave this part as is.
       - ./trino-ranger/config/catalogs:/etc/trino/catalog
       - ./trino-ranger/config/etc:/etc/trino
+      
       # REMOVE the plugins volume mount. The Dockerfile now handles this.
       # - ./trino-ranger/plugins:/usr/lib/trino/plugin
     environment:
