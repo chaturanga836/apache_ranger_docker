@@ -1,76 +1,31 @@
-
+version: "3.9"
 services:
-  # ------------------------------------------------
-  # 1. PostgreSQL Database Service for Ranger
-  # ------------------------------------------------
-
-  ranger-zk:
-    image: apache/ranger-zk:2.7.0
-    container_name: ranger-zk
-    restart: always
-
-  ranger-solr:
-    image: apache/ranger-solr:2.7.0
-    container_name: ranger-solr
-    restart: always
-    depends_on:
-      - ranger-zk
-
   ranger-db:
-    image: apache/ranger-db:2.7.0 # Using the official Ranger DB image
-    container_name: ranger-db
-    restart: always
+    image: postgres:12
+    environment:
+      POSTGRES_DB: ranger
+      POSTGRES_USER: rangeradmin
+      POSTGRES_PASSWORD: rangerR0cks!
     ports:
       - "5432:5432"
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U rangeradmin -d ranger"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+    volumes:
+      - ranger-db-data:/var/lib/postgresql/data
 
-  # ------------------------------------------------
-  # 2. Apache Ranger Admin Service
-  # ------------------------------------------------
   ranger-admin:
-    image: apache/ranger:2.7.0
-    container_name: ranger-admin
-    restart: always
-    user: root 
+    build:
+      context: .
+      dockerfile: Dockerfile.admin
+    depends_on:
+      - ranger-db
+    ports:
+      - "6080:6080"
     environment:
       DB_HOST: ranger-db
       DB_USER: rangeradmin
-      DB_PASSWORD: rangerR0cks! # Correct password from the script
-      DB_NAME: ranger # Correct database name from the script
-      SETUP_MODE: "1"
-      DB_ROOT_USER: rangeradmin
-      DB_FLAVOR: POSTGRES
-      RANGER_HOST: ranger-admin
-    ports:
-      - "6080:6080"
-    depends_on:
-      ranger-db:
-        condition: service_healthy
-    command: /usr/local/bin/wait-for-it.sh ranger-db:5432 --timeout=60 -- /bin/bash -c "/opt/ranger/admin/setup.sh"
-    healthcheck: # <--- Added health check for ranger-admin
-        test: ["CMD-SHELL", "curl -f http://localhost:6080/ | grep 'Ranger Login' || exit 1"]
-        interval: 10s
-        timeout: 5s
-        retries: 5
-
-  # ------------------------------------------------
-  # 3. Trino Service with Ranger Plugin
-  # ------------------------------------------------
-  trino:
-    image: trinodb/trino:476
-    container_name: trino
-    ports:
-      - "8080:8080"
+      DB_PASSWORD: rangerR0cks!
+      DB_NAME: ranger
     volumes:
-      - ./trino-ranger-plugin/trino-ranger-476:/usr/lib/trino/plugin/ranger-trino-plugin
-      - ./trino-ranger/config/etc:/etc/trino
-      - ./trino-ranger/config/catalogs:/etc/trino/catalog
-    command: ["/usr/lib/trino/bin/run-trino"]
+      - ./dist:/opt/ranger/dist
 
 volumes:
-  trino-plugin:
-  ranger_db_data:
+  ranger-db-data:

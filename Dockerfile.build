@@ -1,0 +1,28 @@
+# ===============================
+# Stage 1: Build Apache Ranger 2.7.0
+# ===============================
+FROM maven:3.9.3-eclipse-temurin-8 AS ranger-build
+
+# Install required tools
+RUN apt-get update && apt-get install -y python3 python3-pip git wget && rm -rf /var/lib/apt/lists/*
+
+# Set working directory
+WORKDIR /opt/ranger
+
+# Clone the specific release branch
+RUN git clone --branch release-ranger-2.7.0 https://github.com/apache/ranger.git .
+
+# Build Ranger without running tests
+RUN mvn clean package -DskipTests -Drat.skip=true -Denunciate.skip=true
+
+# Collect distribution artifacts
+RUN mkdir -p /opt/ranger/dist && cp /opt/ranger/target/*.tar.gz /opt/ranger/dist/
+
+# ===============================
+# Stage 2: Minimal image with just artifacts
+# ===============================
+FROM busybox:latest
+
+COPY --from=ranger-build /opt/ranger/dist /opt/ranger/dist
+
+WORKDIR /opt/ranger/dist
