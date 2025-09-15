@@ -28,6 +28,9 @@ COPY --from=ranger-build /opt/ranger/plugin-trino/target/*.jar /opt/ranger/dist/
 # ===============================
 FROM eclipse-temurin:8-jre
 
+# Install the unzip utility in the final image
+RUN apt-get update && apt-get install -y unzip && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /opt/ranger
 
 COPY --from=ranger-build /opt/ranger/security-admin/target/security-admin-web-2.7.0.war /opt/ranger/
