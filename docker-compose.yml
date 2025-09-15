@@ -14,18 +14,21 @@ services:
   ranger-admin:
     build:
       context: .
-      dockerfile: Dockerfile.admin
+      dockerfile: Dockerfile
     depends_on:
       - ranger-db
     ports:
       - "6080:6080"
     environment:
+      # These environment variables are not used by the install.properties file,
+      # but are included here to show a common pattern for configuration.
+      # The install.properties file is the primary source of DB config for Ranger setup.
       DB_HOST: ranger-db
       DB_USER: rangeradmin
       DB_PASSWORD: rangerR0cks!
       DB_NAME: ranger
-    volumes:
-      - ./dist:/opt/ranger/dist
+    # The volume mount for ./dist is no longer needed as the Dockerfile
+    # now handles the build and copy process internally.
 
 volumes:
   ranger-db-data:
