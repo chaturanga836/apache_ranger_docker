@@ -41,6 +41,9 @@ RUN mkdir /opt/ranger/admin && \
 # Copy a secure entrypoint script to handle configuration at runtime
 COPY entrypoint.sh /opt/ranger/admin/entrypoint.sh
 
+# Copy the setup script from the build stage to the final image
+COPY --from=ranger-build /opt/ranger/security-admin/scripts/setup.sh /opt/ranger/admin/setup.sh
+
 # Set executable permissions on the entrypoint script
 RUN chmod +x /opt/ranger/admin/entrypoint.sh
 
