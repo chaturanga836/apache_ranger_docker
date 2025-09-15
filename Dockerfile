@@ -41,6 +41,9 @@ RUN mkdir /opt/ranger/admin && \
 # Copy a secure entrypoint script to handle configuration at runtime
 COPY entrypoint.sh /opt/ranger/admin/entrypoint.sh
 
+# Set executable permissions on the entrypoint script
+RUN chmod +x /opt/ranger/admin/entrypoint.sh
+
 # Set up logs & runtime dirs
 RUN mkdir -p /var/log/ranger /var/run/ranger && \
     chown -R root:root /opt/ranger/admin /var/log/ranger /var/run/ranger
