@@ -33,7 +33,7 @@ FROM eclipse-temurin:8-jre
 WORKDIR /opt/ranger
 
 # Copy the built admin tarball from the build stage
-COPY --from=ranger-build /opt/ranger/ranger-2.7.0-admin.tar.gz /opt/ranger/
+COPY --from=ranger-build /opt/ranger/ranger-admin/target/ranger-2.7.0-admin.tar.gz /opt/ranger/
 
 # Extract and link
 RUN tar -xvzf ranger-2.7.0-admin.tar.gz && \
