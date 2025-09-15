@@ -4,6 +4,12 @@
 # Use a base image that includes Maven and the JDK
 FROM maven:3.9.3-eclipse-temurin-8 AS ranger-build
 
+# Install required tools explicitly
+# These packages are already present in the base image, but we'll add the commands.
+RUN apt-get update && \
+    apt-get install -y default-jdk maven python3 python3-pip git wget && \
+    rm -rf /var/lib/apt/lists/*
+
 # Set working directory
 WORKDIR /opt/ranger
 
