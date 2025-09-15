@@ -16,7 +16,16 @@ RUN git clone --branch release-ranger-2.7.0 https://github.com/apache/ranger.git
 RUN mvn clean package -P 'ranger-admin,ranger-plugins' -DskipTests -Drat.skip=true -Denunciate.skip=true
 
 # ===============================
-# Stage 2: Create Ranger Admin image
+# Stage 2: Create a minimal image with artifacts
+# ===============================
+# This is a good intermediate step to show the artifacts,
+# but it's not the final runnable image
+FROM busybox:latest as ranger-artifacts
+
+COPY --from=ranger-build /opt/ranger/target/*.tar.gz /opt/ranger/dist/
+
+# ===============================
+# Stage 3: Create the final runnable Ranger Admin image
 # ===============================
 FROM eclipse-temurin:8-jre
 
@@ -24,15 +33,15 @@ FROM eclipse-temurin:8-jre
 WORKDIR /opt/ranger
 
 # Copy the built admin tarball from the build stage
-COPY --from=ranger-build /opt/ranger/ranger-3.0.0-SNAPSHOT-admin.tar.gz /opt/ranger/
+COPY --from=ranger-build /opt/ranger/ranger-2.7.0-admin.tar.gz /opt/ranger/
 
 # Extract and link
-RUN tar -xvzf ranger-3.0.0-SNAPSHOT-admin.tar.gz && \
-    ln -s /opt/ranger/ranger-3.0.0-SNAPSHOT-admin /opt/ranger/admin && \
-    rm ranger-3.0.0-SNAPSHOT-admin.tar.gz
+RUN tar -xvzf ranger-2.7.0-admin.tar.gz && \
+    ln -s /opt/ranger/ranger-2.7.0-admin /opt/ranger/admin && \
+    rm ranger-2.7.0-admin.tar.gz
 
-# Copy default install.properties (customize DB settings inside)
-COPY install.properties /opt/ranger/admin/install.properties
+# Copy a secure entrypoint script to handle configuration at runtime
+COPY entrypoint.sh /opt/ranger/admin/entrypoint.sh
 
 # Set up logs & runtime dirs
 RUN mkdir -p /var/log/ranger /var/run/ranger && \
@@ -41,5 +50,5 @@ RUN mkdir -p /var/log/ranger /var/run/ranger && \
 # Expose Ranger Admin UI port
 EXPOSE 6080
 
-# Run Ranger Admin setup script
-CMD ["/opt/ranger/admin/setup.sh"]
+# Use the entrypoint script as the command
+CMD ["/opt/ranger/admin/entrypoint.sh"]
