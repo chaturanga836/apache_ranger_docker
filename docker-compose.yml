@@ -1,34 +1,29 @@
-version: "3.9"
+version: '3.7'
+
 services:
   ranger-db:
-    image: postgres:12
+    image: postgres:15-alpine
+    container_name: ranger-db
     environment:
-      POSTGRES_DB: ranger
-      POSTGRES_USER: rangeradmin
-      POSTGRES_PASSWORD: rangerR0cks!
-    ports:
-      - "5432:5432"
-    volumes:
-      - ranger-db-data:/var/lib/postgresql/data
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
 
   ranger-admin:
     build:
       context: .
       dockerfile: Dockerfile
-    depends_on:
-      - ranger-db
+    image: ranger-admin:2.7.0
+    container_name: ranger-admin
     ports:
       - "6080:6080"
     environment:
-      # These environment variables are not used by the install.properties file,
-      # but are included here to show a common pattern for configuration.
-      # The install.properties file is the primary source of DB config for Ranger setup.
-      DB_HOST: ranger-db
-      DB_USER: rangeradmin
-      DB_PASSWORD: rangerR0cks!
-      DB_NAME: ranger
-    # The volume mount for ./dist is no longer needed as the Dockerfile
-    # now handles the build and copy process internally.
-
-volumes:
-  ranger-db-data:
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      AUDIT_STORE: ${AUDIT_STORE}
+      RANGER_ADMIN_PASSWORD: ${RANGER_ADMIN_PASSWORD}
+    depends_on:
+      - ranger-db
