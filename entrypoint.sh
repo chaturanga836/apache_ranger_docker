@@ -3,17 +3,19 @@ set -e
 
 echo "Generating install.properties from environment variables..."
 
-# Generate the install.properties file from environment variables
-cat <<EOF > /opt/ranger/install.properties
-db_flavor=POSTGRES
-db_host=${DB_HOST}
-db_port=${DB_PORT}
-db_name=${DB_NAME}
-db_user=${DB_USER}
-db_password=${DB_PASSWORD}
-audit_store=${AUDIT_STORE}
-rangerAdmin_password=${RANGER_ADMIN_PASSWORD}
-EOF
+# Define LOGFILE and other variables to fix ambiguous redirect errors
+export RANGER_ADMIN_HOME="/opt/ranger/admin"
+export LOGFILE="/var/log/ranger/setup.log"
+
+# Create install.properties file
+echo "db_flavor=POSTGRES" > /opt/ranger/install.properties
+echo "db_host=${DB_HOST}" >> /opt/ranger/install.properties
+echo "db_port=${DB_PORT}" >> /opt/ranger/install.properties
+echo "db_name=${DB_NAME}" >> /opt/ranger/install.properties
+echo "db_user=${DB_USER}" >> /opt/ranger/install.properties
+echo "db_password=${DB_PASSWORD}" >> /opt/ranger/install.properties
+echo "audit_store=${AUDIT_STORE}" >> /opt/ranger/install.properties
+echo "rangerAdmin_password=${RANGER_ADMIN_PASSWORD}" >> /opt/ranger/install.properties
 
 # Run the setup script to initialize the database
 echo "Running setup.sh script..."
@@ -21,5 +23,4 @@ echo "Running setup.sh script..."
 
 # Start the Ranger Admin service
 echo "Starting Ranger Admin service..."
-# Use the correct startup script. This is typically located in the bin directory.
 exec /opt/ranger/admin/ranger-admin-services.sh start
