@@ -3,8 +3,9 @@
 # ===============================
 FROM maven:3.9.3-eclipse-temurin-8 AS ranger-build
 
-# Install git for cloning the repository
-RUN apt-get update && apt-get install -y git
+# Install git and python3, which are required for the build.
+# The build failure log explicitly states that 'python3' is not found.
+RUN apt-get update && apt-get install -y git python3
 
 # Set working directory
 WORKDIR /opt/ranger
@@ -21,7 +22,7 @@ RUN mvn clean install -DskipTests -Drat.skip=true -Denunciate.skip=true
 FROM eclipse-temurin:8-jre
 
 # Install unzip, lsb-release, and bc packages, which are required by the setup script
-RUN apt-get update && apt-get install -y unzip python3 lsb-release bc && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y unzip lsb-release bc && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
 WORKDIR /opt/ranger
