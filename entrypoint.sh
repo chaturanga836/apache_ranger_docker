@@ -4,7 +4,7 @@ set -e
 echo "Generating install.properties from environment variables..."
 
 # Generate the install.properties file from environment variables
-cat <<EOF > /opt/ranger/admin/install.properties
+cat <<EOF > /opt/ranger/install.properties
 db_flavor=POSTGRES
 db_host=${DB_HOST}
 db_port=${DB_PORT}
