@@ -18,7 +18,7 @@ RUN mvn clean install -DskipTests -Drat.skip=true -Denunciate.skip=true
 # ===============================
 # Stage 2: Create a minimal image with artifacts
 # ===============================
-FROM eclipse-temurin:8-jre
+FROM eclipse-temurin:11-jre
 
 # Install unzip, lsb-release, and bc.
 RUN apt-get update && apt-get install -y unzip lsb-release bc && rm -rf /var/lib/apt/lists/*
