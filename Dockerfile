@@ -14,7 +14,7 @@ RUN git clone --branch release-ranger-2.7.0 https://github.com/apache/ranger.git
 
 # Use 'mvn package' with the correct profiles to build the distribution archives.
 # The 'install' command doesn't create the necessary tarball in this project.
-RUN mvn clean package -DskipTests -Drat.skip=true -Denunciate.skip=true
+RUN mvn clean package -P'ranger-admin' -DskipTests -Drat.skip=true -Denunciate.skip=true
 
 # # ===============================
 # # Stage 2: Create a minimal image with artifacts
