@@ -34,6 +34,10 @@ RUN mkdir -p /opt/ranger/admin && \
     tar -xzvf /opt/ranger/ranger-2.7.0-admin.tar.gz -C /opt/ranger/admin --strip-components=1 && \
     rm /opt/ranger/ranger-2.7.0-admin.tar.gz
 
+    # This is the line that is missing from your Dockerfile
+# It copies your local, customized install.properties file into the image.
+COPY install.properties /opt/ranger/admin/install.properties
+
 # Copy the Trino plugin JAR from the build stage to the correct location.
 COPY --from=ranger-build /opt/ranger/plugin-trino/target/ranger-trino-plugin-2.7.0.jar /opt/ranger/admin/contrib/
 
