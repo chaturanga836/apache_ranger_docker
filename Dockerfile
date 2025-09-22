@@ -37,6 +37,9 @@ RUN mkdir -p /opt/ranger/admin && \
 # Copy the Trino plugin JAR from the build stage to the correct location.
 COPY --from=ranger-build /opt/ranger/plugin-trino/target/ranger-trino-plugin-2.7.0.jar /opt/ranger/admin/contrib/
 
+# Patch the setup.sh script to use the correct path. This is the fix.
+RUN sed -i 's|${RANGER_ADMIN_CONF:-$PWD}/install.properties|/opt/ranger/admin/install.properties|g' /opt/ranger/admin/setup.sh
+
 # Copy the entrypoint script
 COPY entrypoint.sh /opt/ranger/admin/entrypoint.sh
 
