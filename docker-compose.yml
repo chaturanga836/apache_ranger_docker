@@ -13,7 +13,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: ranger-admin:2.7.0
+    image: test-ranger-admin:latest
     container_name: ranger-admin
     ports:
       - "6080:6080"
