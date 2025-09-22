@@ -1,13 +1,20 @@
-version: '3.7'
 
 services:
   ranger-db:
     image: postgres:15-alpine
     container_name: ranger-db
+    restart: always
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - ranger_db_data:/var/lib/postgresql/data  # Added volume for data persistence
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"] # Added healthcheck
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   ranger-admin:
     build:
@@ -15,6 +22,7 @@ services:
       dockerfile: Dockerfile
     image: test-ranger-admin:latest
     container_name: ranger-admin
+    restart: always # Added for resilience
     ports:
       - "6080:6080"
     environment:
@@ -25,5 +33,16 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
       AUDIT_STORE: ${AUDIT_STORE}
       RANGER_ADMIN_PASSWORD: ${RANGER_ADMIN_PASSWORD}
+      DB_FLAVOR: "Postgres" # Hardcoding for clarity
+      SQL_CONNECTOR_JAR: "${SQL_CONNECTOR_JAR}"
+    volumes:
+      - ranger_log_data:/var/log/ranger
+      - ranger_run_data:/var/run/ranger
     depends_on:
-      - ranger-db
+      ranger-db:
+        condition: service_healthy
+
+volumes:
+  ranger_db_data:
+  ranger_log_data:
+  ranger_run_data:
