@@ -34,6 +34,13 @@ RUN mkdir -p /opt/ranger/admin && \
     tar -xzvf /opt/ranger/ranger-2.7.0-admin.tar.gz -C /opt/ranger/admin --strip-components=1 && \
     rm /opt/ranger/ranger-2.7.0-admin.tar.gz
 
+# Create the missing lib directory
+RUN mkdir -p /opt/ranger/admin/lib
+
+# --- Place the new COPY command here ---
+# Copy the PostgreSQL JDBC driver into the lib directory
+COPY lib/postgresql-42.7.8.jar /opt/ranger/admin/lib/postgresql-42.7.8.jar
+
     # This is the line that is missing from your Dockerfile
 # It copies your local, customized install.properties file into the image.
 COPY install.properties /opt/ranger/admin/install.properties
