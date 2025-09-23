@@ -21,7 +21,7 @@ RUN mvn clean install -DskipTests -Drat.skip=true -Denunciate.skip=true
 FROM eclipse-temurin:11-jre
 
 # Install unzip, lsb-release, and bc.
-RUN apt-get update && apt-get install -y unzip lsb-release bc netcat && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y unzip lsb-release bc netcat-traditional && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
 WORKDIR /opt/ranger
