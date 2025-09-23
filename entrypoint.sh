@@ -1,6 +1,14 @@
 #!/bin/bash
 set -e
 
+# Wait for the database service to be ready
+echo "Waiting for PostgreSQL database to be ready..."
+until nc -z "$DB_HOST" "$DB_PORT"; do
+  echo "Database is not ready yet. Waiting..."
+  sleep 1
+done
+echo "Database is ready. Proceeding with setup."
+
 # Correct log file path
 export LOGFILE="/var/log/ranger/setup.log"
 
