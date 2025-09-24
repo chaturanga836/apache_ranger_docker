@@ -36,6 +36,10 @@ RUN mkdir -p /opt/ranger/admin && \
 
 COPY --from=ranger-build /opt/ranger/security-admin/scripts/db_setup.py /opt/ranger/db_setup.py
 
+# Copy the PostgreSQL database schema scripts
+COPY --from=ranger-build /opt/ranger/security-admin/db/postgres/optimized/current/ranger_core_db_postgres.sql /opt/ranger/admin/db/postgres/optimized/current/
+COPY --from=ranger-build /opt/ranger/security-admin/db/postgres/xa_audit_db_postgres.sql /opt/ranger/admin/db/postgres/
+
 # Create the missing lib directory
 RUN mkdir -p /opt/ranger/admin/lib
 
