@@ -34,7 +34,7 @@ RUN mkdir -p /opt/ranger/admin && \
     tar -xzvf /opt/ranger/ranger-2.7.0-admin.tar.gz -C /opt/ranger/admin --strip-components=1 && \
     rm /opt/ranger/ranger-2.7.0-admin.tar.gz
 
-COPY --from=ranger-build /opt/ranger/db_setup.py /opt/ranger/db_setup.py
+COPY --from=ranger-build /opt/ranger/security-admin/scripts/db_setup.py /opt/ranger/db_setup.py
 
 # Create the missing lib directory
 RUN mkdir -p /opt/ranger/admin/lib
