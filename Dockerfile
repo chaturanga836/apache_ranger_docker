@@ -20,8 +20,8 @@ RUN mvn clean install -DskipTests -Drat.skip=true -Denunciate.skip=true
 # ===============================
 FROM eclipse-temurin:11-jre
 
-# Install unzip, lsb-release, and bc.
-RUN apt-get update && apt-get install -y unzip lsb-release bc netcat-traditional python3 && rm -rf /var/lib/apt/lists/*
+# Install required packages, including gettext for envsubst
+RUN apt-get update && apt-get install -y unzip lsb-release bc netcat-traditional python3 gettext && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
 WORKDIR /opt/ranger
@@ -43,12 +43,11 @@ COPY --from=ranger-build /opt/ranger/security-admin/db/postgres/xa_audit_db_post
 # Create the missing lib directory
 RUN mkdir -p /opt/ranger/admin/lib
 
-# --- Place the new COPY command here ---
 # Copy the PostgreSQL JDBC driver into the lib directory
 COPY lib/postgresql-42.7.8.jar /opt/ranger/admin/lib/postgresql-42.7.8.jar
 
-    # This is the line that is missing from your Dockerfile
-# It copies your local, customized install.properties file into the image.
+# Copy the install.properties template file.
+# NOTE: Make sure to rename your local file from install.properties to install.properties.template
 COPY install.properties /opt/ranger/admin/install.properties
 
 # Copy the Trino plugin JAR from the build stage to the correct location.
