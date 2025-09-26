@@ -37,15 +37,21 @@ RUN mkdir -p /opt/ranger/admin && \
 COPY --from=ranger-build /opt/ranger/security-admin/scripts/db_setup.py /opt/ranger/db_setup.py
 
 # Copy the PostgreSQL database schema scripts
-COPY --from=ranger-build /opt/ranger/security-admin/db/postgres/optimized/current/ranger_core_db_postgres.sql /opt/ranger/admin/db/postgres/optimized/current/
-COPY --from=ranger-build /opt/ranger/security-admin/db/postgres/xa_audit_db_postgres.sql /opt/ranger/admin/db/postgres/
+
+
 
 # Create the missing lib directory
 RUN mkdir -p /opt/ranger/admin/lib
 
+# ADD THIS LINE: Create the full directory structure for the PostgreSQL SQL files
+RUN mkdir -p /opt/ranger/admin/db/postgres/optimized/current 
+
 # Copy the PostgreSQL JDBC driver into the lib directory
 COPY lib/postgresql-42.7.8.jar /opt/ranger/admin/lib/postgresql-42.7.8.jar
 
+# Copy the PostgreSQL database schema scripts
+COPY --from=ranger-build /opt/ranger/security-admin/db/postgres/optimized/current/ranger_core_db_postgres.sql /opt/ranger/admin/db/postgres/optimized/current/
+COPY --from=ranger-build /opt/ranger/security-admin/db/postgres/xa_audit_db_postgres.sql /opt/ranger/admin/db/postgres/
 # Copy the install.properties template file.
 # NOTE: Make sure to rename your local file from install.properties to install.properties.template
 COPY install.properties /opt/ranger/admin/install.properties
