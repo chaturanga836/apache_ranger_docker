@@ -26,6 +26,7 @@ services:
     ports:
       - "6080:6080"
     environment:
+      DB_FLAVOR: ${DB_FLAVOR}
       DB_HOST: ${DB_HOST}
       DB_PORT: ${DB_PORT}
       DB_NAME: ${DB_NAME}
