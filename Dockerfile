@@ -6,7 +6,7 @@
 FROM maven:3.9.3-eclipse-temurin-8 AS ranger-build
 
 # Install git and python3.
-RUN apt-get update && apt-get install -y git python3
+RUN apt-get update && apt-get install -y git python3 gettext-base
 
 # Set working directory
 WORKDIR /opt/ranger
