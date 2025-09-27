@@ -1,3 +1,8 @@
+
+# ===============================
+# Stage 1: Build Apache Ranger 2.7.0
+# ===============================
+FROM maven:3.9.3-eclipse-temurin-8 AS ranger-build
 # Dockerfile (Modified for Debug)
 ARG DB_HOST
 ARG DB_PORT
@@ -11,11 +16,6 @@ ARG KEYADMIN_PASSWORD
 ARG RANGER_TAGSYNC_PASSWORD
 ARG RANGER_USERSYNC_PASSWORD
 ARG AUDIT_STORE
-# ===============================
-# Stage 1: Build Apache Ranger 2.7.0
-# ===============================
-FROM maven:3.9.3-eclipse-temurin-8 AS ranger-build
-
 # Install git and python3.
 # Install required dependencies
 RUN apt-get update && \
