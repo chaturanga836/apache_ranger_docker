@@ -1,26 +1,62 @@
-# Ranger Admin image
-FROM eclipse-temurin:8-jre
+# Dockerfile (Modified for Debug)
+ARG DB_HOST
+ARG DB_PORT
+ARG DB_NAME
+ARG DB_USER
+ARG DB_PASSWORD
+ARG DB_FLAVOR
+ARG SQL_CONNECTOR_JAR
+ARG RANGER_ADMIN_PASSWORD
+ARG KEYADMIN_PASSWORD
+ARG RANGER_TAGSYNC_PASSWORD
+ARG RANGER_USERSYNC_PASSWORD
+ARG AUDIT_STORE
+# ===============================
+# Stage 1: Build Apache Ranger 2.7.0
+# ===============================
+FROM maven:3.9.3-eclipse-temurin-8 AS ranger-build
 
-# Create ranger directories
+# Install git and python3.
+# Install required dependencies
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    git \
+    python3 \
+    gettext-base \
+    # Unzip is often needed for Maven packages
+    unzip \
+    # Cleanup to reduce layer size
+    && rm -rf /var/lib/apt/lists/*
+
+ENV DB_HOST=${DB_HOST} \
+    DB_PORT=${DB_PORT} \
+    DB_NAME=${DB_NAME} \
+    DB_USER=${DB_USER} \
+    DB_PASSWORD=${DB_PASSWORD} \
+    DB_FLAVOR=${DB_FLAVOR} \
+    SQL_CONNECTOR_JAR=${SQL_CONNECTOR_JAR} \
+    RANGER_ADMIN_PASSWORD=${RANGER_ADMIN_PASSWORD} \
+    KEYADMIN_PASSWORD=${KEYADMIN_PASSWORD} \
+    RANGER_TAGSYNC_PASSWORD=${RANGER_TAGSYNC_PASSWORD} \
+    RANGER_USERSYNC_PASSWORD=${RANGER_USERSYNC_PASSWORD} \
+    AUDIT_STORE=${AUDIT_STORE}
+
+# Set working directory
 WORKDIR /opt/ranger
 
-# Copy the built admin tarball from local build context
-COPY dist/ranger-3.0.0-SNAPSHOT-admin.tar.gz /opt/ranger/
+# Clone the repository
+RUN git clone --branch release-ranger-2.7.0 https://github.com/apache/ranger.git .
 
-# Extract
-RUN tar -xvzf ranger-3.0.0-SNAPSHOT-admin.tar.gz && \
-    ln -s /opt/ranger/ranger-3.0.0-SNAPSHOT-admin /opt/ranger/admin && \
-    rm ranger-3.0.0-SNAPSHOT-admin.tar.gz
+# Copy the template
+COPY install.properties.template /opt/ranger/security-admin/scripts/install.properties.template
 
-# Copy default install.properties (customize DB settings inside)
-COPY install.properties /opt/ranger/admin/install.properties
+# CRITICAL STEP 2: Generate install.properties using ENV variables
+RUN envsubst < /opt/ranger/security-admin/scripts/install.properties.template > /opt/ranger/security-admin/scripts/install.properties
 
-# Set up logs & runtime dirs
-RUN mkdir -p /var/log/ranger /var/run/ranger && \
-    chown -R root:root /opt/ranger/admin /var/log/ranger /var/run/ranger
 
-# Expose Ranger Admin UI port
-EXPOSE 6080
+# ------------------------------------------------------------------
 
-# Run Ranger Admin
-CMD ["/opt/ranger/admin/setup.sh"]
+# Remove the template
+RUN rm /opt/ranger/security-admin/scripts/install.properties.template 
+
+# ... (The rest of your original Dockerfile follows, but won't be executed)
