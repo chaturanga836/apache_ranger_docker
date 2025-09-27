@@ -14,6 +14,7 @@ WORKDIR /opt/ranger
 # Clone the repository
 RUN git clone --branch release-ranger-2.7.0 https://github.com/apache/ranger.git .
 
+COPY install.properties /opt/ranger/security-admin/scripts/install.properties
 # ⭐️ ADD A DEBUG STAGE MARKER AND STOP ⭐️
 # This tells Docker to stop the build here.
 FROM ranger-build AS repo-cloned-stage
