@@ -28,21 +28,27 @@ RUN git clone --branch release-ranger-2.7.0 https://github.com/apache/ranger.git
 # Copy the template
 COPY install.properties.template /opt/ranger/security-admin/scripts/install.properties.template
 
-# ⭐️ CRITICAL FIX: Explicitly export all ARG values before envsubst ⭐️
-RUN export DB_HOST=${DB_HOST} && \
-    export DB_PORT=${DB_PORT} && \
-    export DB_NAME=${DB_NAME} && \
-    export DB_USER=${DB_USER} && \
-    export DB_PASSWORD=${DB_PASSWORD} && \
-    export DB_FLAVOR=${DB_FLAVOR} && \
-    export SQL_CONNECTOR_JAR=${SQL_CONNECTOR_JAR} && \
-    export RANGER_ADMIN_PASSWORD=${RANGER_ADMIN_PASSWORD} && \
-    export KEYADMIN_PASSWORD=${KEYADMIN_PASSWORD} && \
-    export RANGER_TAGSYNC_PASSWORD=${RANGER_TAGSYNC_PASSWORD} && \
-    export RANGER_USERSYNC_PASSWORD=${RANGER_USERSYNC_PASSWORD} && \
-    export AUDIT_STORE=${AUDIT_STORE} && \
-    envsubst < /opt/ranger/security-admin/scripts/install.properties.template \
-    > /opt/ranger/security-admin/scripts/install.properties
+# 2. Use SED to replace each placeholder with the corresponding ARG value
+RUN sed -i "s|@@DB_FLAVOR@@|${DB_FLAVOR}|g" /opt/ranger/security-admin/scripts/install.properties
+RUN sed -i "s|@@SQL_CONNECTOR_JAR@@|${SQL_CONNECTOR_JAR}|g" /opt/ranger/security-admin/scripts/install.properties
+
+# DB Connection Details (Host, Port, User, Pass)
+RUN sed -i "s|@@DB_HOST@@|${DB_HOST}|g" /opt/ranger/security-admin/scripts/install.properties
+RUN sed -i "s|@@DB_PORT@@|${DB_PORT}|g" /opt/ranger/security-admin/scripts/install.properties
+RUN sed -i "s|@@DB_NAME@@|${DB_NAME}|g" /opt/ranger/security-admin/scripts/install.properties
+RUN sed -i "s|@@DB_USER@@|${DB_USER}|g" /opt/ranger/security-admin/scripts/install.properties
+RUN sed -i "s|@@DB_PASSWORD@@|${DB_PASSWORD}|g" /opt/ranger/security-admin/scripts/install.properties
+
+# Passwords
+RUN sed -i "s|@@RANGER_ADMIN_PASSWORD@@|${RANGER_ADMIN_PASSWORD}|g" /opt/ranger/security-admin/scripts/install.properties
+RUN sed -i "s|@@KEYADMIN_PASSWORD@@|${KEYADMIN_PASSWORD}|g" /opt/ranger/security-admin/scripts/install.properties
+RUN sed -i "s|@@RANGER_TAGSYNC_PASSWORD@@|${RANGER_TAGSYNC_PASSWORD}|g" /opt/ranger/security-admin/scripts/install.properties
+RUN sed -i "s|@@RANGER_USERSYNC_PASSWORD@@|${RANGER_USERSYNC_PASSWORD}|g" /opt/ranger/security-admin/scripts/install.properties
+
+# Audit Store
+RUN sed -i "s|@@AUDIT_STORE@@|${AUDIT_STORE}|g" /opt/ranger/security-admin/scripts/install.properties
+
+# ------------------------------------------------------------------
 
 # Remove the template
 RUN rm /opt/ranger/security-admin/scripts/install.properties.template 

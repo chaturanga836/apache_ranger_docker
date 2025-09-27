@@ -24,7 +24,7 @@
 PYTHON_COMMAND_INVOKER=python3
 
 #DB_FLAVOR=MYSQL|ORACLE|POSTGRES|MSSQL|SQLA
-DB_FLAVOR=${DB_FLAVOR}
+DB_FLAVOR=@@DB_FLAVOR@@
 #
 
 #
@@ -35,7 +35,7 @@ DB_FLAVOR=${DB_FLAVOR}
 #SQL_CONNECTOR_JAR=/usr/share/java/postgresql.jar
 #SQL_CONNECTOR_JAR=/usr/share/java/sqljdbc4.jar
 #SQL_CONNECTOR_JAR=/opt/sqlanywhere17/java/sajdbc4.jar
-SQL_CONNECTOR_JAR=${SQL_CONNECTOR_JAR}
+SQL_CONNECTOR_JAR=@@SQL_CONNECTOR_JAR@@
 
 
 #
@@ -46,12 +46,12 @@ SQL_CONNECTOR_JAR=${SQL_CONNECTOR_JAR}
 # **************************************************************************
 #
 #db_root_user=root|SYS|postgres|sa|dba
-#db_host=host:port              # for DB_FLAVOR=MYSQL|POSTGRES|SQLA|MSSQL       #for example: db_host=localhost:3306
+db_host=@@DB_HOST@@:@@DB_PORT@@              # for DB_FLAVOR=MYSQL|POSTGRES|SQLA|MSSQL       #for example: db_host=localhost:3306
 #db_host=host:port:SID          # for DB_FLAVOR=ORACLE                          #for SID example: db_host=localhost:1521:ORCL
 #db_host=host:port/ServiceName  # for DB_FLAVOR=ORACLE                          #for Service example: db_host=localhost:1521/XE
 db_root_user=root
 db_root_password=
-db_host=localhost
+#db_host=localhost
 #SSL config
 db_ssl_enabled=false
 db_ssl_required=false
@@ -71,9 +71,9 @@ db_ssl_certificate_file=
 #
 # DB UserId used for the Ranger schema
 #
-db_name=${DB_NAME}
-db_user=${DB_USER}
-db_password=${DB_PASSWORD}
+db_name=@@DB_NAME@@
+db_user=@@DB_USER@@
+db_password=@@DB_PASSWORD@@
 
 #For over-riding the jdbc url.
 is_override_db_connection_string=false
@@ -82,15 +82,15 @@ db_override_connection_string=
 
 # change password. Password for below mentioned users can be changed only once using this property.
 #PLEASE NOTE :: Password should be minimum 8 characters with min one alphabet and one numeric.
-rangerAdmin_password=${RANGER_ADMIN_PASSWORD}
-rangerTagsync_password=${RANGER_TAGSYNC_PASSWORD}
-rangerUsersync_password=${RANGER_USERSYNC_PASSWORD}
-keyadmin_password=${KEYADMIN_PASSWORD}
+rangerAdmin_password=@@RANGER_ADMIN_PASSWORD@@
+rangerTagsync_password=@@RANGER_TAGSYNC_PASSWORD@@
+rangerUsersync_password=@@RANGER_USERSYNC_PASSWORD@@
+keyadmin_password=@@KEYADMIN_PASSWORD@@
 
 
 #Source for Audit Store. Currently solr, elasticsearch and cloudwatch logs are supported.
 # * audit_store is solr
-audit_store=${AUDIT_STORE}
+audit_store=@@AUDIT_STORE@@
 
 # * audit_solr_url Elasticsearch Host(s). E.g. 127.0.0.1
 audit_elasticsearch_urls=
