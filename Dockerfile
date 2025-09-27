@@ -49,8 +49,10 @@ RUN mkdir -p /opt/ranger/admin/db/postgres/optimized/current
 # Copy the PostgreSQL JDBC driver into the lib directory
 COPY lib/postgresql-42.7.8.jar /opt/ranger/admin/lib/postgresql-42.7.8.jar
 
-# Copy the PostgreSQL database schema scripts
+# Copy the core schema (goes into the deep 'optimized/current' path)
 COPY --from=ranger-build /opt/ranger/security-admin/db/postgres/optimized/current/ranger_core_db_postgres.sql /opt/ranger/admin/db/postgres/optimized/current/
+
+# Copy the audit schema (goes into the parent 'db/postgres' path)
 COPY --from=ranger-build /opt/ranger/security-admin/db/postgres/xa_audit_db_postgres.sql /opt/ranger/admin/db/postgres/
 # Copy the install.properties template file.
 # NOTE: Make sure to rename your local file from install.properties to install.properties.template
@@ -59,9 +61,13 @@ COPY install.properties /opt/ranger/admin/install.properties
 # Copy the Trino plugin JAR from the build stage to the correct location.
 COPY --from=ranger-build /opt/ranger/plugin-trino/target/ranger-trino-plugin-2.7.0.jar /opt/ranger/admin/contrib/
 
-# Patch the setup.sh script to use the correct path. This is the fix.
+# Patch the setup.sh script to use the correct path for install.properties. (Existing fix)
 RUN sed -i 's|${RANGER_ADMIN_CONF:-$PWD}/install.properties|/opt/ranger/admin/install.properties|g' /opt/ranger/admin/setup.sh
 
+# --------------------------------------------------------------------------------------------------
+# ⭐️ NEW FIX: Remove the line containing 'ranger-admin-initd' to skip service registration
+RUN sed -i '/ranger-admin-initd/d' /opt/ranger/admin/setup.sh
+# --------------------------------------------------------------------------------------------------
 # Copy the entrypoint script
 COPY entrypoint.sh /opt/ranger/admin/entrypoint.sh
 
