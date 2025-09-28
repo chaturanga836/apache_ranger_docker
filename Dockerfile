@@ -62,4 +62,6 @@ RUN mkdir -p /opt/ranger/admin/lib && \
 
     ENV MAVEN_OPTS="-Xms1024m -Xmx2048m"
 # 1. Run the Maven build (This compiles Ranger and requires the config file to exist)
-RUN mvn clean compile package install -DskipTests -Denunciate.skip=true
+RUN mvn clean install -DskipTests -Denunciate.skip=true -P!distro
+
+RUN /opt/ranger/security-admin/setup.sh
