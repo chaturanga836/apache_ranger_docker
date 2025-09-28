@@ -64,4 +64,4 @@ RUN mkdir -p /opt/ranger/admin/lib && \
 # 1. Run the Maven build (This compiles Ranger and requires the config file to exist)
 RUN mvn clean install -DskipTests -Denunciate.skip=true -P!distro
 
-RUN /opt/ranger/security-admin/setup.sh
+RUN /opt/ranger/security-admin/scripts/setup.sh
