@@ -60,5 +60,6 @@ RUN mkdir -p /opt/ranger/admin/lib && \
     wget -O /opt/ranger/admin/lib/postgresql-42.7.8.jar \
     https://repo1.maven.org/maven2/org/postgresql/postgresql/42.7.8/postgresql-42.7.8.jar
 
+    ENV MAVEN_OPTS="-Xms1024m -Xmx2048m"
 # 1. Run the Maven build (This compiles Ranger and requires the config file to exist)
-RUN mvn clean compile package install -DskipTests
+RUN mvn clean compile package install -DskipTests -Denunciate.skip=true
