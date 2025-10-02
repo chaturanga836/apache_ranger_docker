@@ -20,7 +20,6 @@ ARG AUDIT_STORE
 # Install required dependencies
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-    # Add openjdk-8-jdk and maven
     openjdk-8-jdk \
     maven \
     git \
@@ -28,7 +27,10 @@ RUN apt-get update && \
     gettext-base \
     wget \
     unzip \
-    # Cleanup to reduce layer size
+    # 🛑 FIX 1: Add missing Linux utilities
+    lsb-release \
+    bc \
+    # Cleanup
     && rm -rf /var/lib/apt/lists/*
 
 ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
@@ -69,7 +71,7 @@ RUN mkdir -p /opt/ranger/admin/lib && \
 
 ENV MAVEN_OPTS="-Xms1024m -Xmx2048m"
 # 1. Run the Maven build (This compiles Ranger and requires the config file to exist)
-RUN mvn clean install -DskipTests -Denunciate.skip=true -P!distro
+RUN mvn clean package assembly:single -DskipTests -Denunciate.skip=true -P!distro
 
 # 🔑 CRITICAL FIX: Copy the generated config to the root directory 🔑
 # The setup.sh script is hardcoded to look for install.properties in the /opt/ranger root.
