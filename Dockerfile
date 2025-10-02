@@ -75,6 +75,6 @@ RUN mvn clean package assembly:single -DskipTests -Denunciate.skip=true -P!distr
 
 # 🔑 CRITICAL FIX: Copy the generated config to the root directory 🔑
 # The setup.sh script is hardcoded to look for install.properties in the /opt/ranger root.
-RUN cp /opt/ranger/security-admin/scripts/install.properties /opt/ranger/install.properties
+# RUN cp /opt/ranger/security-admin/scripts/install.properties /opt/ranger/install.properties
 
-RUN /opt/ranger/security-admin/scripts/setup.sh
+# RUN /opt/ranger/security-admin/scripts/setup.sh
